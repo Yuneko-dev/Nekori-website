@@ -28,7 +28,7 @@ The following illustrates the folder structure:
       <ul>
         <li>
           <img src="/img/nekori-64px.png" alt="File" class="tree-icon icon-nekori">
-          <span class="file jpg">[app prefix]_yyyy-mm-dd_hh-mm<span class="file-extension">.tachibk</span></span>
+          <span class="file jpg">app.yuneko.nekori_yyyy-mm-dd_hh-mm<span class="file-extension">.tachibk</span></span>
         </li>
         <li>
           <img src="/img/nekori-64px.png" alt="File" class="tree-icon icon-nekori">
