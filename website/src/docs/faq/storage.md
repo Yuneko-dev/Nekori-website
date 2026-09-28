@@ -27,11 +27,11 @@ The following illustrates the folder structure:
       <span class="folder main">autobackup</span>
       <ul>
         <li>
-          <img src="/img/mihon-64px.png" alt="File" class="tree-icon icon-mihon">
+          <img src="/img/nekori-64px.png" alt="File" class="tree-icon icon-nekori">
           <span class="file jpg">[app prefix]_yyyy-mm-dd_hh-mm<span class="file-extension">.tachibk</span></span>
         </li>
         <li>
-          <img src="/img/mihon-64px.png" alt="File" class="tree-icon icon-mihon">
+          <img src="/img/nekori-64px.png" alt="File" class="tree-icon icon-nekori">
           <span>...</span>
         </li>
       </ul>

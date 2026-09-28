@@ -305,11 +305,11 @@ html:not(.dark) {
     font-size: 1.25rem
   }
 
-  .mihon-logo {
+  .nekori-logo {
     width: 1.4rem
     height: 1.4rem
     background: currentColor
-    mask: url('/img/mihon.svg') center / contain no-repeat
+    mask: url('/img/nekori.svg') center / contain no-repeat
   }
 
   .is-primary & {
@@ -318,7 +318,7 @@ html:not(.dark) {
     color: #dce4ff
     background: rgba(88, 112, 223, 0.35)
 
-    .mihon-logo {
+    .nekori-logo {
       width: 2.25rem
       height: 2.25rem
     }
