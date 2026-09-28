@@ -5,7 +5,7 @@ defineProps<{ title: string, description?: string, dir?: string }>()
 <template>
   <div
     tw="w-full h-full flex flex-col"
-    style="background:linear-gradient(90deg, rgba(5, 10, 20, 0.88) 0%, rgba(8, 15, 28, 0.62) 38%, rgba(8, 15, 28, 0.30) 68%, rgba(8, 15, 28, 0.48) 100%), linear-gradient(0deg, rgba(4, 9, 18, 0.94) 0%, rgba(6, 12, 24, 0.34) 48%, rgba(6, 12, 24, 0.42) 100%), url(https://raw.githubusercontent.com/Yuneko-dev/Nekori-website/main/website/src/public/img/open-graph-background.png); background-size:cover; background-position:center; background-repeat:no-repeat;"
+    style="background:linear-gradient(90deg, rgba(5, 10, 20, 0.88) 0%, rgba(8, 15, 28, 0.62) 38%, rgba(8, 15, 28, 0.30) 68%, rgba(8, 15, 28, 0.48) 100%), linear-gradient(0deg, rgba(4, 9, 18, 0.94) 0%, rgba(6, 12, 24, 0.34) 48%, rgba(6, 12, 24, 0.42) 100%), url(https://raw.githubusercontent.com/Yuneko-dev/Nekori-website/main/website/src/public/img/open-graph-background.png);"
   >
     <div tw="p-10 w-full min-h-0 grow flex flex-col items-center justify-between">
       <div tw="w-full flex justify-between items-center text-4xl font-medium">
