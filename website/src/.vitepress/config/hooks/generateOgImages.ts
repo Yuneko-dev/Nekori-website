@@ -17,7 +17,7 @@ async function generateOgImages(config: SiteConfig) {
   const background = await readFile(resolve(__dirname, '../../../public/img/open-graph-background.png'))
   const template = (await readFile(resolve(__dirname, '../../theme/components/OgImageTemplate.vue'), 'utf-8'))
     .replace('__NEKORI_LOGO__', `data:image/png;base64,${logo.toString('base64')}`)
-    .replace('https://mihon.app/img/open-graph-background.png', `data:image/png;base64,${background.toString('base64')}`)
+    .replace('https://nekori.yuneko.dev/img/open-graph-background.png', `data:image/png;base64,${background.toString('base64')}`)
 
   const fonts: SatoriOptions['fonts'] = [
     {
