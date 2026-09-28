@@ -6,13 +6,13 @@ description: Understanding Storage Permissions.
 
 # Storage location
 
-Mihon manages several things within a selected storage location, including automatic backups, chapter downloads, and the Local source.
+Nekori manages several things within a selected storage location, including automatic backups, chapter downloads, and the Local source.
 
 ::: tip Selecting a storage location
 Keep the following in mind when setting up your Storage location:
-* Create a "Mihon" folder at the top-level of your storage (ex. `/Internal Storage/Mihon/`).
-* Do not use your device's system folders (such as "**Documents**" or "**Downloads**"), they are restricted by Android and will cause issues when Mihon tries to access them.
-* When selecting your storage location during the setup process, give access to the "Mihon" folder, not the folders within.
+* Create a "Nekori" folder at the top-level of your storage (ex. `/Internal Storage/Nekori/`).
+* Do not use your device's system folders (such as "**Documents**" or "**Downloads**"), they are restricted by Android and will cause issues when Nekori tries to access them.
+* When selecting your storage location during the setup process, give access to the "Nekori" folder, not the folders within.
 :::
 
 The following illustrates the folder structure:
@@ -28,7 +28,7 @@ The following illustrates the folder structure:
       <ul>
         <li>
           <img src="/img/mihon-64px.png" alt="File" class="tree-icon icon-mihon">
-          <span class="file jpg">app.mihon_yyyy-mm-dd_hh-mm<span class="file-extension">.tachibk</span></span>
+          <span class="file jpg">[app prefix]_yyyy-mm-dd_hh-mm<span class="file-extension">.tachibk</span></span>
         </li>
         <li>
           <img src="/img/mihon-64px.png" alt="File" class="tree-icon icon-mihon">
@@ -50,7 +50,7 @@ The following illustrates the folder structure:
                 <ul>
                   <li>
                     <img src="/img/zip.svg" alt="Compressed File" class="tree-icon icon-cbz">
-                    <span class="file cbz">Chapter01<span class="file-extension">.cbz</span></span>
+                    <span class="file cbz">Chapter01<span class="file-extension">.zip</span></span>
                   </li>
                   <li>
                     <img src="/img/zip.svg" alt="Compressed File" class="tree-icon icon-cbz">
@@ -64,7 +64,7 @@ The following illustrates the folder structure:
                 <ul>
                   <li>
                     <img src="/img/zip.svg" alt="Compressed File" class="tree-icon icon-cbz">
-                    <span class="file cbz">Chapter01<span class="file-extension">.cbz</span></span>
+                    <span class="file cbz">Chapter01<span class="file-extension">.zip</span></span>
                   </li>
                 </ul>
               </li>
@@ -74,7 +74,7 @@ The following illustrates the folder structure:
     </li>
     <li>
       <img src="/img/folder.svg" alt="Folder" class="tree-icon icon-folder">
-      <span class="folder main">local</span>
+      <span class="folder main">localnovels</span>
       <ul>
         <li>
           <img src="/img/folder.svg" alt="Folder" class="tree-icon icon-folder">
@@ -82,7 +82,7 @@ The following illustrates the folder structure:
           <ul>
             <li>
               <img src="/img/zip.svg" alt="Compressed File" class="tree-icon icon-cbz">
-              <span class="file cbz">Chapter01<span class="file-extension">.cbz</span></span>
+              <span class="file cbz">Chapter01<span class="file-extension">.zip</span></span>
             </li>
             <li>
               <img src="/img/zip.svg" alt="Compressed File" class="tree-icon icon-cbz">
@@ -96,7 +96,7 @@ The following illustrates the folder structure:
           <ul>
             <li>
               <img src="/img/zip.svg" alt="Compressed File" class="tree-icon icon-cbz">
-              <span class="file cbz">Chapter01<span class="file-extension">.cbz</span></span>
+              <span class="file cbz">Chapter01<span class="file-extension">.zip</span></span>
             </li>
           </ul>
         </li>
@@ -108,23 +108,11 @@ The following illustrates the folder structure:
 
 Backup file name prefixes are unique for the app to avoid potential collisions between forks.
 
-## Migrating from Tachiyomi v0.14.x or earlier
-
-If you were using the default locations before, then simply select the existing `Tachiyomi` folder.
-
-::: warning
-If you have an existing `downloads` folder, you should be selecting its parent folder (if applicable; avoid choosing the root of your storage) or you should move your downloads to a new location.
-
-Note the illustrated example above where `downloads` is a folder _within_ the location being set, and the individual source folders are _within_ that `downloads` folder.
-:::
-
-If you need to change your storage location or have moved files around from outside the app, you may need to force the app to recheck for the files by going to <nav to="advanced"> then **Reindex downloads**.
-
 ## Scoped Storage
 
 Since Android 11, most apps are enforced to use [Scoped Storage](https://developer.android.com/about/versions/11/privacy/storage) for better security for users so that apps cannot read everything on the device.
 
-**Scoped Storage**'s introduction affects various storage-related functions in **Mihon**.
+**Scoped Storage**'s introduction affects various storage-related functions in **Nekori**.
 These functions may become slower due to **Scoped Storage**'s inherent latency, as discussed in detail [here on Scoped Storage](https://www.xda-developers.com/android-q-storage-access-framework-scoped-storage/).
 
 This can impact tasks like deleting chapters, library loading times, accessing local files like downloads or the local source, and more. As always, using internal storage is recommended over SD cards if latency is of concern.

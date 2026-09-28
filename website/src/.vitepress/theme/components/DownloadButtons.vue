@@ -1,36 +1,8 @@
 <script setup lang="ts">
-/// <reference types="@types/gtag.js" />
-
-import type { Component } from 'vue'
-import {
-  IconAlertOutline,
-  IconAndroid,
-  IconBird,
-  IconCalendarOutline,
-  IconFlaskOutline,
-  IconTagOutline,
-} from '@iconify-prerendered/vue-mdi'
+import { IconAndroid, IconCalendarOutline, IconFlaskOutline, IconTagOutline } from '@iconify-prerendered/vue-mdi'
 import { computed, onMounted, ref } from 'vue'
 import { data as release } from '../data/release.data'
 import ReleaseDate from './ReleaseDate.vue'
-
-type ReleaseId = 'beta' | 'foss' | 'nightly' | 'stable'
-type ReleaseDateType = 'beta' | 'stable'
-type ButtonTone = 'primary' | 'secondary' | 'tertiary'
-
-interface DownloadCard {
-  id: ReleaseId
-  asset?: { browser_download_url: string, name: string }
-  buttonTone: ButtonTone
-  dateType?: ReleaseDateType
-  description: string
-  icon?: Component
-  isPrimary?: boolean
-  note?: string
-  tagName: string
-  title: string
-  useMihonLogo?: boolean
-}
 
 const props = withDefaults(defineProps<{
   group?: 'all' | 'other' | 'primary'
@@ -38,89 +10,41 @@ const props = withDefaults(defineProps<{
   group: 'all',
 })
 
-const downloadInformation = computed(() => ({
-  // The preview-release feed is Nightly until Beta has its own endpoint.
-  nightly: {
-    tagName: release.beta.tag_name ?? 'r0000',
-    asset: (release.beta.assets ?? [])
-      .find(asset => /^mihon-r\d{4,}.apk/.test(asset.name)),
-  },
-  foss: {
-    tagName: release.stable.tag_name ?? 'v0.00.0',
-    asset: (release.stable.assets ?? [])
-      .find(asset => /^mihon-v\d+\.\d+\.\d+-foss\.apk/.test(asset.name)),
-  },
-  stable: {
-    tagName: release.stable.tag_name ?? 'v0.00.0',
-    asset: (release.stable.assets ?? [])
-      .find(asset => /^mihon-v\d+\.\d+\.\d+.apk/.test(asset.name)),
-  },
-}))
-
-const downloadCards = computed<DownloadCard[]>(() => [
+const downloadCards = computed(() => [
   {
     id: 'stable',
-    ...downloadInformation.value.stable,
+    asset: release.stable.assets.find(asset => asset.name === `nekori-${release.stable.tag_name}.apk`),
+    releaseUrl: release.stable.html_url,
     buttonTone: 'primary',
-    dateType: 'stable',
+    dateType: 'stable' as const,
     description: 'Recommended for most users',
     isPrimary: true,
     note: 'Requires Android 8.0 or higher.',
+    tagName: release.stable.tag_name,
     title: 'Stable',
-    useMihonLogo: true,
   },
-  // Add the future Beta card here. Its isPrimary flag will place it beside Stable.
   {
     id: 'nightly',
-    ...downloadInformation.value.nightly,
+    asset: release.nightly.assets.find(asset => asset.name === `nekori-${release.nightly.tag_name}.apk`),
+    releaseUrl: release.nightly.html_url,
     buttonTone: 'secondary',
-    dateType: 'beta',
+    dateType: 'nightly' as const,
     description: 'May contain unfinished features or stability issues',
-    icon: IconFlaskOutline,
+    isPrimary: false,
+    note: '',
+    tagName: release.nightly.tag_name,
     title: 'Nightly',
   },
-  {
-    id: 'foss',
-    ...downloadInformation.value.foss,
-    buttonTone: 'tertiary',
-    dateType: 'stable',
-    description: 'A fully FOSS-compliant build, compiled from GitHub source code.',
-    icon: IconBird,
-    title: 'FOSS',
-  },
-].filter(card => card.asset))
+])
 
-const visibleDownloadCards = computed(() => downloadCards.value.filter((card) => {
-  if (props.group === 'primary')
-    return card.isPrimary
-
-  if (props.group === 'other')
-    return !card.isPrimary
-
-  return true
-}))
+const visibleDownloadCards = computed(() => downloadCards.value.filter(card =>
+  props.group === 'primary' ? card.isPrimary : props.group === 'other' ? !card.isPrimary : true,
+))
 
 const isAndroid = ref(true)
-
 onMounted(() => {
-  if (props.group === 'other')
-    return
-
   isAndroid.value = !!navigator.userAgent.match(/android/i)
 })
-
-function handleAnalytics(type: ReleaseId) {
-  const label = type[0].toUpperCase() + type.slice(1)
-  const version = type === 'stable' || type === 'foss'
-    ? release.stable.tag_name
-    : release.beta.tag_name
-
-  window.gtag?.('event', 'Download', {
-    event_category: 'App',
-    event_label: label,
-    version,
-  })
-}
 </script>
 
 <template>
@@ -130,14 +54,14 @@ function handleAnalytics(type: ReleaseId) {
         Unsupported operating system
       </p>
       <p>
-        <strong>Mihon</strong> is only available on Android. Any non-Android app named <strong>Mihon</strong> is unaffiliated with this project.
+        <strong>Nekori</strong> is only available on Android. Any non-Android app named <strong>Nekori</strong> is unaffiliated with this project.
       </p>
       <p>
         Read the <a href="/docs/faq/general">General FAQ</a> for more information.
       </p>
     </div>
     <section class="release-selector" aria-label="Choose your release">
-      <div class="release-cards" :class="{ 'has-beta': visibleDownloadCards.some(card => card.id === 'beta') }">
+      <div class="release-cards">
         <article
           v-for="card in visibleDownloadCards"
           :key="card.id"
@@ -146,8 +70,8 @@ function handleAnalytics(type: ReleaseId) {
         >
           <div class="release-card-header">
             <span class="release-icon" aria-hidden="true">
-              <span v-if="card.useMihonLogo" class="mihon-logo" />
-              <component :is="card.icon" v-else />
+              <IconFlaskOutline v-if="card.id === 'nightly'" />
+              <img v-else src="/img/logo-128px.png" alt="" width="36" height="36">
             </span>
             <div>
               <h3>{{ card.title }}</h3>
@@ -175,16 +99,14 @@ function handleAnalytics(type: ReleaseId) {
               class="download-button"
               :class="card.buttonTone"
               :download="card.asset?.name"
-              :href="card.asset?.browser_download_url"
-              @click="handleAnalytics(card.id)"
+              :href="card.asset?.browser_download_url || card.releaseUrl"
             >
               <IconDownload />
-              <span class="text">Mihon {{ card.title }}</span>
+              <span class="text">Nekori {{ card.title }}</span>
               <span class="version">{{ card.tagName }}</span>
             </a>
             <span v-if="card.note" class="release-action-note">
               <IconAndroid v-if="card.id === 'stable'" aria-hidden="true" />
-              <IconAlertOutline v-else aria-hidden="true" />
               <span>{{ card.note }}</span>
             </span>
           </div>

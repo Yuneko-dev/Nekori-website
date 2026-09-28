@@ -123,8 +123,8 @@ function defaultSidebar(): DefaultTheme.SidebarItem[] {
           link: '/docs/guides/reader-settings',
         },
         {
-          text: 'Shizuku',
-          link: '/docs/guides/shizuku',
+          text: 'Novel Reader (Advanced)',
+          link: '/docs/guides/novel-reader-snippets',
         },
       ],
     },

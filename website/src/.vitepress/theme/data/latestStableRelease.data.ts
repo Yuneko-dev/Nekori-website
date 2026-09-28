@@ -15,7 +15,7 @@ export default defineLoader({
     const { stableLatest } = await getReleaseData()
 
     return {
-      name: stableLatest.name ?? `Mihon ${stableLatest.tag_name}`,
+      name: stableLatest.name ?? `Nekori ${stableLatest.tag_name}`,
       publishedAt: stableLatest.published_at ?? undefined,
       tagName: stableLatest.tag_name,
     }

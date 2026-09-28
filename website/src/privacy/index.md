@@ -1,12 +1,12 @@
 ---
 title: Privacy policy
-description: Privacy Policy that explains how Mihon collects, uses, and protects users' personal information.
+description: Privacy Policy that explains how Nekori collects, uses, and protects users' personal information.
 editLink: false
 ---
 
 # Privacy policy
 
-Mihon is an Open Source app.
+Nekori is an Open Source app.
 This SERVICE is provided at no cost and is intended for use as is.
 
 This page details our policies with the collection, use, and disclosure of Personal Information if anyone decided to use our Service.
@@ -20,19 +20,12 @@ We will not use or share your information with anyone except as described in thi
 For a better experience, while using our Service, we may require you to provide us with certain personally identifiable information.
 The information that we request will be retained by us and used as described in this privacy policy.
 
-Links to the privacy policy of third-party service providers used by the app:
-* [Google Analytics](https://www.google.com/analytics/terms/)
-* [Firebase Crashlytics](https://firebase.google.com/support/privacy)
+Nekori does not include Firebase Crashlytics, and this website does not load Google Analytics.
+The hosting provider still receives normal web requests.
 
-### Analytics Data
-
-The Service is integrated with Google Analytics to collect anonymized analytics data about Service usage.
-
-For more information, you can refer to [How Google uses data when you use our partners' sites or apps](https://google.com/policies/privacy/partners/).
-
-### Crash Reporting
-
-The Service uses Firebase Crashlytics to collect crash reports and performance data to improve app stability and user experience. This data is anonymized and does not contain personally identifiable information.
+Sources, plugin repositories, trackers, and optional AI or online TTS providers receive the requests needed for their features.
+Translation and summaries send selected text to your configured provider; its own privacy policy and usage limits apply.
+Backups can include personal library data and settings, so keep them private.
 
 ## External Links
 
@@ -51,4 +44,4 @@ Thus, you are advised to review this page periodically for any changes.
 
 ## Contact Us
 
-If you have any questions or suggestions about this Privacy Policy, do not hesitate to reach out to us on [our Discord server](https://discord.gg/mihon).
+If you have any questions or suggestions about this Privacy Policy, do not hesitate to reach out to us on [Nekori Discussions](https://github.com/Yuneko-dev/Nekori/discussions).

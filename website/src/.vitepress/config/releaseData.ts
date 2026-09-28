@@ -5,7 +5,7 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { Octokit } from '@octokit/rest'
 
-const cacheFile = resolve(dirname(fileURLToPath(import.meta.url)), '../../../.cache/github-releases.json')
+const cacheFile = resolve(dirname(fileURLToPath(import.meta.url)), '../../../.cache/nekori-releases.json')
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
 
 export type Release = GetResponseDataTypeFromEndpointMethod<typeof octokit.repos.getLatestRelease>
@@ -13,11 +13,11 @@ export type Release = GetResponseDataTypeFromEndpointMethod<typeof octokit.repos
 export interface ReleaseData {
   stable: Release[]
   stableLatest: Release
-  betaLatest: Release
+  nightlyLatest: Release
 }
 
 interface CachedReleaseData extends ReleaseData {
-  version: 1
+  version: 2
   fetchedAt: string
 }
 
@@ -60,31 +60,31 @@ async function loadReleaseData(): Promise<ReleaseData> {
 }
 
 async function fetchReleaseData(): Promise<ReleaseData> {
-  const [stable, stableLatest, betaLatest] = await Promise.all([
+  const [releases, stableLatest, nightlyLatest] = await Promise.all([
     octokit.paginate(octokit.repos.listReleases, {
-      owner: 'mihonapp',
-      repo: 'mihon',
+      owner: 'Yuneko-dev',
+      repo: 'Nekori',
       per_page: 100,
     }),
-    octokit.repos.getLatestRelease({ owner: 'mihonapp', repo: 'mihon' }),
-    octokit.repos.getLatestRelease({ owner: 'mihonapp', repo: 'mihon-preview' }),
+    octokit.repos.getLatestRelease({ owner: 'Yuneko-dev', repo: 'Nekori' }),
+    octokit.repos.getLatestRelease({ owner: 'Yuneko-dev', repo: 'Nekori-nightly' }),
   ])
 
   return {
-    stable,
+    stable: releases.filter(release => !release.draft && !release.prerelease),
     stableLatest: stableLatest.data,
-    betaLatest: betaLatest.data,
+    nightlyLatest: nightlyLatest.data,
   }
 }
 
 async function readCache(): Promise<ReleaseData | undefined> {
   try {
     const cached = JSON.parse(await readFile(cacheFile, 'utf8')) as Partial<CachedReleaseData>
-    if (cached.version === 1 && Array.isArray(cached.stable) && cached.stableLatest && cached.betaLatest) {
+    if (cached.version === 2 && Array.isArray(cached.stable) && cached.stableLatest && cached.nightlyLatest) {
       return {
         stable: cached.stable,
         stableLatest: cached.stableLatest,
-        betaLatest: cached.betaLatest,
+        nightlyLatest: cached.nightlyLatest,
       }
     }
   }
@@ -97,7 +97,7 @@ async function writeCache(data: ReleaseData): Promise<void> {
   await mkdir(dirname(cacheFile), { recursive: true })
   const temporaryFile = `${cacheFile}.tmp`
   const cached: CachedReleaseData = {
-    version: 1,
+    version: 2,
     fetchedAt: new Date().toISOString(),
     ...data,
   }

@@ -1,6 +1,6 @@
 ---
 title: News
-description: Collection of news and announcements about Mihon.
+description: News and announcements, including notices from the upstream Mihon project.
 lastUpdated: false
 editLink: false
 prev: false
@@ -14,7 +14,7 @@ import RssLink from "@theme/components/RssLink.vue";
 
 # News
 
-Collection of news and announcements about Mihon.
+News and announcements, including notices from the upstream Mihon project.
 
 Also available as <RssLink />.
 

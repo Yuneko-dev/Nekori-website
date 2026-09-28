@@ -27,24 +27,24 @@ Refer to "[Unable to install the app or extensions](/docs/guides/troubleshooting
 ### "Invalid location" error
 This error indicates the selected storage location is invalid. Possible reasons include:
 * The app lacks Storage permission.
-* The app cannot access your Mihon storage location folder.
+* The app cannot access your Nekori storage location folder.
 
 Try these solutions:
-* **(For Android 9 and below)** In the Mihon app info or your Phone Settings, under the Permissions section, grant Mihon storage permission.
-* Grant Mihon access to your desired storage location again.
-  * Navigate to <nav to="data-and-storage">, tap on "**Storage location**", go to your "Mihon" folder and give Mihon access to that folder.
-* Create a new folder or move your existing "Mihon" outside of your device's system folders.
-  * Do not use your device's system folders (such as "**Documents**" or "**Downloads**"), they are restricted by Android and will cause issues when Mihon tries to access them.
+* **(For Android 9 and below)** In the Nekori app info or your Phone Settings, under the Permissions section, grant Nekori storage permission.
+* Grant Nekori access to your desired storage location again.
+  * Navigate to <nav to="data-and-storage">, tap on "**Storage location**", go to your "Nekori" folder and give Nekori access to that folder.
+* Create a new folder or move your existing "Nekori" outside of your device's system folders.
+  * Do not use your device's system folders (such as "**Documents**" or "**Downloads**"), they are restricted by Android and will cause issues when Nekori tries to access them.
   * Refer to the [Storage FAQ](/docs/faq/storage) for more details.
 
 ### Storage issues with Android 11+
-See the [Scoped Storage](/docs/faq/storage#scoped-storage) portion of the FAQ to learn how it affects **Mihon** in **Android 11+** and how to fix it.
+See the [Scoped Storage](/docs/faq/storage#scoped-storage) portion of the FAQ to learn how it affects **Nekori** in **Android 11+** and how to fix it.
 
 ### `Cannot Access SD Card`
 * Temporarily change the Storage location from your SD card, then change it back to your original storage location and restart the app.
 * Long filepath/filenames could also trigger this issue, as Android's file manager doesn't support **>255** characters:
-  * If possible, move your "Mihon" to the top-level of your SD card or shorten your "Mihon" folder name.
-  * Remember to set the Storage location after moving or changing your "Mihon" folder.
+  * If possible, move your "Nekori" to the top-level of your SD card or shorten your "Nekori" folder name.
+  * Remember to set the Storage location after moving or changing your "Nekori" folder.
 
 ## Advanced errors
 
@@ -90,7 +90,7 @@ Try these solutions:
 Storage-related error causes:
 
 * Storage full, check device/SD Card.
-* Grant **Mihon** SD card access in Android settings.
+* Grant **Nekori** SD card access in Android settings.
 * Download folder access issues, validate paths.
 * Corrupted or inaccessible writing drive, verify using a file manager.
 

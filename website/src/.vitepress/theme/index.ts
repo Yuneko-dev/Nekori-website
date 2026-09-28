@@ -10,8 +10,6 @@ import DefaultTheme from 'vitepress/theme'
 
 import Layout from './Layout.vue'
 
-import analytics from './plugin/analytics'
-
 // Import Stylus files
 import './styles/base.styl'
 // Import Global plugins
@@ -25,7 +23,6 @@ export default {
     app.component('IconDownload', IconDownload)
     app.component('IconNewspaperVariant', IconNewspaperVariant)
     app.component('IconBugReport', IconBugReport)
-    analytics({ id: 'G-KN9GHR5EKT' })
   },
   Layout,
 }

@@ -23,11 +23,11 @@ import { getStableRelease } from './config/releaseData'
 // For use with loading Markdown plugins
 import themeConfig from './config/themeConfig'
 
-const title = 'Mihon'
-const description = 'Discover and read manga, webtoons, comics, and more – easier than ever on your Android device.'
+const title = 'Nekori'
+const description = 'Discover and read novels and more – easier than ever on your Android device.'
 
 const env = loadEnv('', process.cwd())
-const hostname: string = env.VITE_HOSTNAME || 'http://localhost:4173'
+const hostname: string = env.VITE_HOSTNAME || 'https://nekori.yuneko.dev'
 
 export default defineConfig({
   outDir: '../dist',
@@ -58,8 +58,8 @@ export default defineConfig({
 
         const versionLabel = tag
         const desc = prettyDate
-          ? `Changelog for Mihon ${versionLabel}, released on ${prettyDate}`
-          : `Changelog for Mihon ${versionLabel}`
+          ? `Changelog for Nekori ${versionLabel}, released on ${prettyDate}`
+          : `Changelog for Nekori ${versionLabel}`
 
         pageData.frontmatter.description = pageData.frontmatter.description || desc
         pageData.title = pageData.frontmatter.title
@@ -70,8 +70,8 @@ export default defineConfig({
   },
   transformHead: async context => generateMeta(context, hostname),
   buildEnd: async (context) => {
-    generateFeed(context, hostname)
-    generateOgImages(context)
+    await generateFeed(context, hostname)
+    await generateOgImages(context)
   },
   vite: {
     resolve: {

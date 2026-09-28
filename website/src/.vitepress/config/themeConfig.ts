@@ -18,9 +18,10 @@ const themeConfig: DefaultTheme.Config = {
   socialLinks: [
     {
       icon: 'github',
-      link: 'https://github.com/mihonapp/mihon',
+      link: 'https://github.com/Yuneko-dev/Nekori',
       ariaLabel: 'Project GitHub',
     },
+    /*
     {
       icon: 'discord',
       link: 'https://discord.gg/mihon',
@@ -44,15 +45,18 @@ const themeConfig: DefaultTheme.Config = {
       ariaLabel: 'Support subreddit',
     },
     // { icon: "instagram", link: "https://instagram.com/mihonapp", ariaLabel: "Instagram Page" },
+    */
   ],
 
   footer: {
-    message: '<a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Open-source Apache Licensed</a> <span class="divider">|</span> <a href="/privacy/">Privacy policy</a>',
-    copyright: `Copyright © ${new Date().getFullYear()} Mihon App`,
+    message:
+      '<a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Open-source Apache Licensed</a> <span class="divider">|</span> <a href="/privacy/">Privacy policy</a>',
+    copyright: `Copyright © ${new Date().getFullYear()} Nekori`,
   },
 
   editLink: {
-    pattern: 'https://github.com/mihonapp/website/edit/main/website/src/:path',
+    pattern:
+      'https://github.com/Yuneko-dev/Nekori-website/edit/main/website/src/:path',
     text: 'Help us improve this page',
   },
 
@@ -66,12 +70,7 @@ const themeConfig: DefaultTheme.Config = {
   },
 
   search: {
-    provider: 'algolia',
-    options: {
-      appId: 'IXX45N1P5C',
-      apiKey: 'a7a819b0bd88bc7333c7f42d611ec04e',
-      indexName: 'mihon',
-    },
+    provider: 'local',
   },
 }
 

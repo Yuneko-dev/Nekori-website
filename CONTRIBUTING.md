@@ -1,4 +1,4 @@
-# Mihon Website Contributing Guide
+# Nekori Website Contributing Guide
 
 Before submitting your contribution, please make sure to take a moment and read through the following guidelines:
 
@@ -90,4 +90,4 @@ It is also recommended you lint your files before the PR.
 
 Thank you to all the people who have already contributed!
 
-[![List of Contributors](https://contrib.rocks/image?repo=mihonapp/website 'List of Contributors')](https://github.com/mihonapp/website/graphs/contributors)
+[![List of Contributors](https://contrib.rocks/image?repo=mihonapp/website 'List of Contributors')](https://github.com/Yuneko-dev/Nekori-website/graphs/contributors)

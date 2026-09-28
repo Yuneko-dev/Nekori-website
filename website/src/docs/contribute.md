@@ -9,11 +9,11 @@ Find out how to help build the app.
 ## Code
 Know how to code and want to improve something or you generally want to support the creation of the app?
 
-<a href="https://github.com/mihonapp/mihon" target="_blank" rel="noopener">
+<a href="https://github.com/Yuneko-dev/Nekori" target="_blank" rel="noopener">
   <img
     class="only-light"
-    src="https://github-readme-stats.vercel.app/api/pin/?username=mihonapp&repo=mihon&bg_color=f6f6f7&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=false"
-    alt="mihonapp/mihon - GitHub"
+    src="https://github-readme-stats.vercel.app/api/pin/?username=Yuneko-dev&repo=Nekori&bg_color=f6f6f7&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=false"
+    alt="Yuneko-dev/Nekori - GitHub"
     width="400"
     height="120"
     loading="lazy"
@@ -21,8 +21,8 @@ Know how to code and want to improve something or you generally want to support 
   />
   <img
     class="only-dark"
-    src="https://github-readme-stats.vercel.app/api/pin/?username=mihonapp&repo=mihon&bg_color=1a1a41&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true"
-    alt="mihonapp/mihon - GitHub"
+    src="https://github-readme-stats.vercel.app/api/pin/?username=Yuneko-dev&repo=Nekori&bg_color=1a1a41&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true"
+    alt="Yuneko-dev/Nekori - GitHub"
     width="400"
     height="120"
     loading="lazy"
@@ -30,11 +30,11 @@ Know how to code and want to improve something or you generally want to support 
   />
 </a>
 
-<a href="https://github.com/mihonapp/website" target="_blank" rel="noopener">
+<a href="https://github.com/Yuneko-dev/Nekori-website" target="_blank" rel="noopener">
   <img
     class="only-light"
-    src="https://github-readme-stats.vercel.app/api/pin/?username=mihonapp&repo=website&bg_color=f6f6f7&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=false"
-    alt="mihonapp/website - GitHub"
+    src="https://github-readme-stats.vercel.app/api/pin/?username=Yuneko-dev&repo=Nekori-website&bg_color=f6f6f7&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=false"
+    alt="Yuneko-dev/Nekori-website - GitHub"
     width="400"
     height="120"
     loading="lazy"
@@ -42,8 +42,8 @@ Know how to code and want to improve something or you generally want to support 
   />
   <img
     class="only-dark"
-    src="https://github-readme-stats.vercel.app/api/pin/?username=mihonapp&repo=website&bg_color=1a1a41&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true"
-    alt="mihonapp/website - GitHub"
+    src="https://github-readme-stats.vercel.app/api/pin/?username=Yuneko-dev&repo=Nekori-website&bg_color=1a1a41&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true"
+    alt="Yuneko-dev/Nekori-website - GitHub"
     width="400"
     height="120"
     loading="lazy"
@@ -52,7 +52,9 @@ Know how to code and want to improve something or you generally want to support 
 </a>
 
 ## Translation
-Find out how to help translate the app.
+To contribute Nekori translations, see the [Nekori repository](https://github.com/Yuneko-dev/Nekori) or ask in [GitHub Discussions](https://github.com/Yuneko-dev/Nekori/discussions).
+
+The Weblate project and statistics below belong to upstream **Mihon**; contributions there support the shared translations.
 
 <a href="https://hosted.weblate.org/engage/mihon/" target="_blank" rel="noopener">
   <img
@@ -97,7 +99,7 @@ Find out how to help translate the app.
 </a>
 
 Want to help translate the app to your language?
-You can easily help by utilizing a service we use called **Weblate**.
+You can help upstream Mihon translations using **Weblate**.
 
 > View translation project [here on Weblate](https://hosted.weblate.org/engage/mihon/).
 

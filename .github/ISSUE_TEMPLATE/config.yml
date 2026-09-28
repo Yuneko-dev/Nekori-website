@@ -1,7 +1,7 @@
 contact_links:
   - name: ⚠️ Application issue
-    url: https://github.com/mihonapp/mihon/issues/new/choose
-    about: Issues and requests about the app itself should be opened in the Mihon repository instead
+    url: https://github.com/Yuneko-dev/Nekori/issues/new/choose
+    about: Issues and requests about the app itself should be opened in the Nekori repository instead
   - name: 🖥️ Website
-    url: https://mihon.app/docs/guides/getting-started
+    url: https://nekori.yuneko.dev/docs/guides/getting-started
     about: Guides, troubleshooting, and answers to common questions

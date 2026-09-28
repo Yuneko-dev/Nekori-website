@@ -1,6 +1,6 @@
 ---
 title: Changelogs
-description: Changelogs of all Mihon stable releases.
+description: Changelogs of all Nekori stable releases.
 lastUpdated: false
 editLink: false
 prev: false
@@ -13,7 +13,7 @@ import ChangelogsList from "@theme/components/ChangelogsList.vue";
 
 # Changelogs
 
-Changelogs of all Mihon stable releases, which are also available [on GitHub](https://github.com/mihonapp/mihon/releases).<br>
-Nightly releases can be seen [on GitHub](https://github.com/mihonapp/mihon-preview/releases).
+Changelogs of all Nekori stable releases, which are also available [on GitHub](https://github.com/Yuneko-dev/Nekori/releases).<br>
+Nightly releases can be seen [on GitHub](https://github.com/Yuneko-dev/Nekori-nightly/releases).
 
 <ChangelogsList />

@@ -13,7 +13,11 @@ const __fonts = resolve(__dirname, '../../fonts')
 
 async function generateOgImages(config: SiteConfig) {
   const pages = await createContentLoader('**/*.md', { excerpt: true }).load()
-  const template = await readFile(resolve(__dirname, '../../theme/components/OgImageTemplate.vue'), 'utf-8')
+  const logo = await readFile(resolve(__dirname, '../../../public/img/logo-128px.png'))
+  const background = await readFile(resolve(__dirname, '../../../public/img/open-graph-background.png'))
+  const template = (await readFile(resolve(__dirname, '../../theme/components/OgImageTemplate.vue'), 'utf-8'))
+    .replace('__NEKORI_LOGO__', `data:image/png;base64,${logo.toString('base64')}`)
+    .replace('https://mihon.app/img/open-graph-background.png', `data:image/png;base64,${background.toString('base64')}`)
 
   const fonts: SatoriOptions['fonts'] = [
     {
@@ -114,7 +118,7 @@ async function generateOgImages(config: SiteConfig) {
       url: `/changelogs/${r.tag_name}`,
       frontmatter: {
         // Prefer release name; fallback to tag
-        title: r.name || `Mihon ${r.tag_name.substring(1)}`,
+        title: r.name || `Nekori ${r.tag_name.substring(1)}`,
         description: extractChangelogSnippet(r.body),
       } as any,
     }

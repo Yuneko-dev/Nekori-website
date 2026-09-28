@@ -5,6 +5,8 @@ description: Misuse of Mihon’s name and branding by a group may endanger the p
 date: 2025-11-05
 ---
 
+> This notice is preserved from the upstream Mihon project.
+
 Hello everyone,
 
 With Kotatsu's recent shutdown and due to some ongoing issues over the years, I believe Mihon is also under threat. If you care about the project's future, please take a moment to read this message.

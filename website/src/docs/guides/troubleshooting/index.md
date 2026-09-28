@@ -55,7 +55,7 @@ Newer Android users can check/change WebView in [Developer Options](https://deve
 :::
 
 ::: warning Caution with Non-Standard WebView
-Using non-standard **WebView** (like **Firefox**) might cause **Mihon** to malfunction or crash.
+Using non-standard **WebView** (like **Firefox**) might cause **Nekori** to malfunction or crash.
 
 It's best to use the standard [Android System WebView](https://play.google.com/store/apps/details?id=com.google.android.webview) or [Google Chrome](https://play.google.com/store/apps/details?id=com.android.chrome).
 :::
@@ -63,7 +63,7 @@ It's best to use the standard [Android System WebView](https://play.google.com/s
 ## Cloudflare
 
 **Cloudflare**, an anti-bot mechanism, is used by some sources.
-Some sources intentionally have higher **Cloudflare** protection to deter apps like **Mihon**.
+Some sources intentionally have higher **Cloudflare** protection to deter apps like **Nekori**.
 
 ### Dealing with Cloudflare looping
 Certain sources may employ more advanced **Cloudflare** protection, leading to **WebView** continuously reloading when bypassing using the above solution.
@@ -113,8 +113,8 @@ For crash investigations, navigate to <nav to="advanced"> and tap **Dump crash l
 ### Obtaining more logs
 To diagnose abnormal app behavior, record device logs using a [Logcat Reader](https://github.com/darshanparajuli/LogcatReader/releases).
 
-### App or extension installation issues
-Encountering problems while trying to install app or extension `.apk` files?
+### App installation issues
+Encountering problems while trying to install the Nekori app `.apk` file?
 Follow these steps:
 
 1. Install the latest version of [Split APK Installer](https://github.com/Aefyr/SAI/releases) from their **GitHub Releases** page.
@@ -127,7 +127,7 @@ Common errors include:
 
 ::: details `INSTALL_FAILED_UPDATE_INCOMPATIBLE: Package apk.file_name signatures do not match the previously installed version; ignoring!`
 Seeing this error while installing means the `.apk` already exists on the device, indicating a mismatch in signatures.
-* Backup any data, uninstall the existing app or extension from your device, then install the `.apk` file again.
+* Backup any data, uninstall the existing app from your device, then install the `.apk` file again.
 :::
 
 ::: details `DISPLAY_NAME column is null`

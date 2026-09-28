@@ -4,7 +4,7 @@ import { getReleaseData } from '../../config/releaseData'
 
 export interface AppRelease {
   stable: Release
-  beta: Release
+  nightly: Release
 }
 
 declare const data: AppRelease
@@ -12,7 +12,7 @@ export { data }
 
 export default defineLoader({
   async load(): Promise<AppRelease> {
-    const { stableLatest: stable, betaLatest: beta } = await getReleaseData()
-    return { stable, beta }
+    const { stableLatest: stable, nightlyLatest: nightly } = await getReleaseData()
+    return { stable, nightly }
   },
 })
