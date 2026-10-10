@@ -50,7 +50,7 @@ const themeConfig: DefaultTheme.Config = {
 
   footer: {
     message:
-      '<a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Open-source Apache Licensed</a> <span class="divider">|</span> <a href="/privacy/">Privacy policy</a>',
+      '<a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Open-source Apache Licensed</a> <span class="divider">|</span> <a href="/privacy/">Privacy policy</a> <span class="divider">|</span> <a href="/terms-of-service/">Terms of Service</a>',
     copyright: `Copyright © ${new Date().getFullYear()} Nekori`,
   },
 
