@@ -6,8 +6,8 @@ description: Customize Nekori's WebView novel reader with CSS and JavaScript sni
 
 # Novel reader snippets
 
-Nekori uses a **WebView** novel reader that supports custom CSS and JavaScript snippets. Nekori currently retains the `Tsundoku` names for its reader
-JavaScript objects, CSS variables, and some HTML elements; use those names exactly as shown.
+Nekori's WebView novel reader supports custom CSS and JavaScript snippets.
+JavaScript uses the public `window.nekori` API; CSS targets the reader's current DOM and theme variables.
 
 ## Open advanced settings
 
@@ -57,213 +57,259 @@ plugin CSS, legacy custom CSS, and enabled CSS snippets. Snippets follow their l
 For declarations with equal importance and specificity, later declarations win. The normal CSS
 cascade still applies; turning on **Source CSS priority** does not guarantee every source rule wins.
 
-The document exposes `window.Tsundoku` and `window.TsundokuTheme`. On a chapter load, the reader
-refreshes the `Tsundoku` object and runs user JavaScript snippets in list order. Infinite-scroll
-appends only re-run snippets opted into append handling. Settings updates can reapply changed
-snippets, so write code that remains safe when executed more than once.
+The document exposes `window.nekori` before its controllers finish initializing.
+Enabled source customJS included in the document runs after runtime initialization; user JavaScript snippets run in list order through native commands.
+Infinite-scroll appends rerun only user snippets opted into append handling.
+Settings updates can reapply changed snippets, so make each snippet safe to run again.
 
 ## JavaScript API
 
-Reader snippets run inside Android WebView and can use browser APIs such as `document` and `window`.
-This is separate from the Hermes runtime used to execute source plugins.
-The reader API retains the name **Tsundoku**; there is no replacement `window.Nekori` object.
+Snippets run in Android WebView and use browser APIs such as `document`, `window`, and `MutationObserver`.
+Source plugins execute separately in Hermes; their `@libs/*` helpers are not WebView globals.
 
-### Chapter metadata: `window.Tsundoku`
+The public reader object is **`window.nekori`**, with a lowercase `n`.
+The document creates a fresh object when it loads and removes it when the runtime is disposed.
+Wrap asynchronous work in a function: snippets are classic scripts, so top-level `await` is not supported.
 
-| Property | Type | Meaning |
-| --- | --- | --- |
-| `novelUrl` | string | Normalized novel URL; may be empty or a local path. |
-| `currentChapter` | chapter object | Metadata for the current chapter. |
-| `chapters` | array of chapter objects | Chapters supplied to the reader in reading order, not a list of DOM elements or downloaded chapter bodies. |
-| `runtime` | object | Reader state; fields described below. |
-| `actions` | object | Functions that request reader actions. |
+```js
+void (async () => {
+  const reader = window.nekori
+  if (!reader)
+    return
+  await reader.ready
+  console.info(reader.context.novel.name, reader.context.chapter.name)
+})().catch(console.error)
+```
 
-Each chapter object has these fields:
+### Public members
 
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `id` | number | Chapter database ID; `-1` when unavailable. |
-| `title` | string | Chapter title; empty when unavailable. |
-| `number` | number | Chapter number, which may be fractional; `-1` when unavailable. |
-| `path` | string | Stored chapter path or URL. |
-| `url` | string | Resolved URL when possible; local or unresolved paths are not necessarily HTTP URLs. |
+| Member | Type / effect |
+| --- | --- |
+| `ready` | `Promise<void>`; wait for reader controllers to initialize. |
+| `context` | Current document, novel, chapter, loaded-chapter metadata, and runtime state. |
+| `config` | Current document configuration; treat it as app-owned data. |
+| `events` | Subscription API described below; it has no public `emit` method. |
+| `layout` | Layout controller or `null`; check `layout.enabled` before paged operations. |
+| `player` | Media controller or `null`; ordinary text documents have no player. |
+| `fetch(input, init?)` | `Promise<Response>`; requests through the app's configured reader proxy. |
+| `refetch()` | Requests that the native app reload the current chapter from its source; returns `void`. |
+| `error(message)` | Reports a string message to the host's reader error channel; returns `void`. |
+| `dispose()` | Tears down the runtime; reserved for the embedding app, not routine snippet cleanup. |
 
-Read metadata when you need it instead of retaining an old `currentChapter` object across navigation.
-Treat app-owned properties as read-only: changing them does not update the library or navigate the reader.
+`ready` does not mean that images, fonts, page reflow, or media playback have finished.
+Read `reader.context` when needed instead of retaining chapter or runtime objects across native updates.
+Writing to context/config does not navigate the reader or update native preferences or library data.
+
+There is no public `actions` object for next/previous chapter navigation, TTS control, or translation.
+`window.Tsundoku`, `window.TsundokuTheme`, `window.reader`, `window.tts`, `window.pageReader`, and `window.LNReaderPlayer` are not supplied by the current runtime.
+Use the reader's normal controls for operations that are not in this public API.
+
+### Context and metadata
+
+| `reader.context` property | Meaning |
+| --- | --- |
+| `documentId`, `mode` | Document identity and `'reader'`, `'download'`, or `'error'` mode. |
+| `novel` | `{ id, name, path }`; all three fields are strings. |
+| `chapter` | Current chapter metadata described below. |
+| `nextChapter` | Adjacent chapter metadata or `null`. |
+| `chapters` | Metadata for chapters supplied to this document; in the app these are the loaded chapters, not the novel's complete table of contents. |
+| `runtime` | Current state described below. |
+| `strings` | Host-supplied localized labels; keys are strings. |
+| `ui`, `style`, `layout`, `player` | Optional configuration data; `context.layout` and `context.player` are not the controller objects. |
+| `sourceBaseUrl` | Optional source base URL. |
+| `novelId`, `chapterId`, `sourceId` | Optional string identifiers supplied by the host; novel/chapter IDs fall back to the metadata IDs. |
+
+Chapter metadata fields:
+
+| Field | Type / meaning |
+| --- | --- |
+| `id` | String identifier; keep native database IDs as strings to avoid integer precision loss. |
+| `name` | String chapter name. |
+| `path` | String source identity, preserved as supplied; it is not necessarily a URL. |
+| `progress` | Number holding saved progress supplied by the host, not a live scroll position. |
+| `url` | Optional string resolved for navigation; local or unresolved values are not necessarily HTTP URLs. |
+| `number` | Optional numeric chapter number; it can be fractional. |
 
 ### Runtime state
 
-Read these properties through `window.Tsundoku.runtime`:
+Read these fields through `reader.context.runtime`:
 
-| Property | Type | Meaning |
-| --- | --- | --- |
-| `isEditMode` | boolean | Whether reader editing mode is active. |
-| `isInfScroll` | boolean | Whether infinite scrolling is enabled. |
-| `textSelectionBlocked` | boolean | Whether text selection is blocked. |
-| `forcedLowercase` | boolean | Whether forced lowercase is enabled. |
-| `menuVisible` | boolean | Whether reader controls are visible; the find-in-page bar also counts. |
-| `immersive` | boolean | Reader controls are hidden; this is not Android's fullscreen permission or setting. |
-| `ttsState` | string | `'stopped'`, `'playing'`, or `'paused'`. |
-| `loadingChapter` | boolean | Whether chapter loading is in progress. |
-| `progress` | number | Scroll progress through the loaded document, from `0` to `1`. |
-| `chapterProgress` | number | Scroll progress through the visible chapter, from `0` to `1`. |
-| `currentChapterId` | string or null | Chapter ID reported by scroll tracking, when available. |
+| Field | Type / meaning |
+| --- | --- |
+| `editing` | Boolean; reader editing mode. |
+| `infinite` | Boolean; infinite scrolling is enabled. |
+| `textSelectionBlocked` | Boolean; text selection is blocked. |
+| `forcedLowercase` | Boolean; forced lowercase is enabled. |
+| `menuVisible` | Boolean; native reader chrome is visible. |
+| `immersive` | Boolean; reader chrome is hidden, not an Android fullscreen permission. |
+| `ttsState` | `'playing'`, `'paused'`, `'stopped'`, or `'starting'`. |
+| `loadingChapter`, `loadingNext` | Booleans; loading the current or next chapter. |
+| `noMoreChapters` | Boolean; the host has marked the end of chapter navigation. |
 
-The progress fields are published by scroll tracking and may not exist when your snippet first runs.
-Do not assume scroll-specific values describe paged mode.
-Other runtime fields and helper functions support the reader internally; avoid modifying them.
+The runtime object has no `progress`, `chapterProgress`, or `currentChapterId` field.
+For paged reading, use `reader.layout.position`; there is no public equivalent of the old vertical progress event.
 
-### Actions
+### State subscriptions
 
-Call these functions through `window.Tsundoku.actions`:
+Use `reader.events.subscribe('document.stateChanged', listener)`.
+The callback receives `{ runtime, event? }`, not a DOM `Event` with `detail`.
+`event` is an optional host label; read the runtime fields instead of depending on that label.
+This notification runs when the host applies document configuration or a runtime-state patch.
+Read the current state once when your snippet starts, then subscribe for updates.
 
-| Method | Parameters | Effect |
-| --- | --- | --- |
-| `nextChapter()` | None | Request the next chapter. |
-| `prevChapter()` | None | Request the previous chapter. |
-| `startTts()` | None | Start text-to-speech, if enabled and available. |
-| `pauseTts()` | None | Pause text-to-speech. |
-| `resumeTts()` | None | Resume text-to-speech. |
-| `stopTts()` | None | Stop text-to-speech. |
-| `setProgress(percent)` | Integer percentage | Seek within the current reading layout. Values are clamped to `0–100`; pass `50`, not `0.5`, for halfway. |
-
-These functions return no result or completion promise.
-They request native reader actions; a missing next chapter or unavailable TTS engine cannot be bypassed by a snippet.
-In infinite scrolling, vertical seeking uses the visible chapter's boundaries when available.
-
-For example, this snippet adds a TTS button once per document:
+Subscriptions return an unsubscribe function.
+Before replacing a listener on a snippet re-run, unsubscribe the previous one:
 
 ```js
-(() => {
-  const root = document.getElementById('LNReader-chapter')
-  if (!root || document.getElementById('my-start-tts'))
+void (async () => {
+  const reader = window.nekori
+  if (!reader)
     return
-  const button = document.createElement('button')
-  button.id = 'my-start-tts'
-  button.textContent = 'Read aloud'
-  button.addEventListener('click', () => window.Tsundoku?.actions?.startTts())
-  root.prepend(button)
-})()
+  await reader.ready
+  const key = '__myReaderStateUnsubscribe'
+  window[key]?.()
+
+  const update = (runtime) => {
+    document.documentElement.classList.toggle('my-reader-menu-open', runtime.menuVisible)
+  }
+  update(reader.context.runtime)
+  window[key] = reader.events.subscribe('document.stateChanged', ({ runtime }) => {
+    update(runtime)
+  })
+})().catch(console.error)
 ```
 
-### Events
+The old `tsundoku:*` DOM events are not dispatched.
+Protocol names such as `layout.positionChanged`, `chapter.appended`, and `reader.error` are sent from the reader to native; they are not automatically echoed to subscription callbacks.
+Do not use `events.subscribe` as a substitute for an outgoing-message listener or private native bridge.
 
-Subscribe with `window.addEventListener(eventName, handler)` and read the payload from `event.detail`.
-Events report changes, so also read the current runtime state when your snippet starts.
+### Paged layout
 
-| Event | Payload | Meaning |
-| --- | --- | --- |
-| `tsundoku:menuvisibilitychange` | `{ menuVisible, immersive }` | Reader controls changed visibility. A fresh-document update can instead send `{ visible }`; accept both forms. |
-| `tsundoku:chapternavigate` | `{ direction: 'next' }` or `{ direction: 'prev' }` | Navigation was requested, not a guarantee that the destination has loaded. |
-| `tsundoku:chapterloading` | `{ loading: boolean }` | Chapter loading state changed. |
-| `tsundoku:ttsstatechange` | `{ state: 'stopped' \| 'playing' \| 'paused' }` | TTS playback state changed. |
-| `tsundoku:progresschange` | `{ progress, chapterProgress, chapterId, isLast }` | Throttled scroll progress update. Progress values use `0–1`; `chapterId` can be null. `isLast` means the last loaded chapter, not the novel's final chapter. |
+Wait for `ready`, then check `reader.layout?.enabled`.
+The controller's `position` can still be `null` before the first page map is available.
+Its fields are `chapterId`, `unitIndex`, `unitCount`, `firstPage`, `lastPage`, `totalPages`, and `progress`.
+`unitIndex` is zero-based within the visible chapter; a unit is one page or a two-page spread.
+`progress` uses `0–1`, while `seekPercent` takes `0–100`.
 
-A new document discards its old listeners.
-Within the same document, snippets can run again after settings changes or infinite-scroll appends.
-Remove your previous listener before installing a replacement:
+| Method | Result / effect |
+| --- | --- |
+| `moveBy(-1)` / `moveBy(1)` | Boolean; move one reading unit. At the forward boundary it can request another chapter. |
+| `seekUnit(index)` | Boolean; seek to a zero-based unit in the current visible chapter. |
+| `seekPercent(percent)` | Boolean; seek within the current visible chapter, for example `50` for halfway. |
+| `revealElement(element)` | Boolean; reveal an existing element in the paged viewport. |
+| `reflow(preserveViewport?)` | Boolean; request layout recalculation after changing content. |
+
+For example, reveal a chapter heading in the current layout:
 
 ```js
-(() => {
-  const key = '__myReaderMenuHandler'
-  const eventName = 'tsundoku:menuvisibilitychange'
-  if (window[key])
-    window.removeEventListener(eventName, window[key])
-
-  const update = (visible) => {
-    document.documentElement.classList.toggle('my-reader-menu-open', Boolean(visible))
-  }
-  window[key] = (event) => {
-    const detail = event.detail || {}
-    update(detail.menuVisible ?? detail.visible ?? window.Tsundoku?.runtime?.menuVisible)
-  }
-  window.addEventListener(eventName, window[key])
-  update(window.Tsundoku?.runtime?.menuVisible)
-})()
+void (async () => {
+  const reader = window.nekori
+  if (!reader)
+    return
+  await reader.ready
+  const chapter = [...document.querySelectorAll('nekori-chapter')]
+    .find(element => element.getAttribute('data-nekori-chapter-id') === reader.context.chapter.id)
+  const heading = chapter?.querySelector('h1, h2, h3')
+  if (!heading)
+    return
+  if (reader.layout?.enabled)
+    reader.layout.revealElement(heading)
+  else
+    heading.scrollIntoView({ behavior: 'auto', block: 'start' })
+})().catch(console.error)
 ```
 
-## `window.TsundokuTheme`
+Use `revealElement` instead of `scrollIntoView` in paged mode: native scrolling can displace the column viewport.
+`configure`, `prepareSilentTurn`, `finishSilentTurn`, and the controller's `dispose` are exposed for embedding code; leave them to the app.
 
-Theme colors are available as hex strings in JavaScript, for example:
+### Networking and refetch
 
-```js
-window.TsundokuTheme.mdSysColorPrimary
-window.TsundokuTheme.mdSysColorOnSurface
-window.TsundokuTheme.tsundokuReaderBackground
-window.TsundokuTheme.tsundokuReaderText
-```
+`reader.fetch` accepts a URL string, `URL`, or `Request`, plus optional standard `RequestInit`.
+For HTTP(S) requests, resolve relative paths against a real source URL first; the proxy does not turn an opaque chapter path into an external URL.
+Check `response.ok` yourself; an HTTP error still returns a `Response`.
+If **Allow local proxy API** is disabled, this method reports an actionable reader error and rejects.
+Use the ordinary browser `fetch` for `blob:` and `data:` URLs.
 
-Material color keys use the `mdSysColor` prefix with `Primary`, `Secondary`, `Tertiary`, or
-`Error`, plus their `On…`, `…Container`, and `On…Container` variants. Other keys are
-`Background`, `OnBackground`, `Surface`, `OnSurface`, `SurfaceVariant`, `OnSurfaceVariant`, and
-`Outline`, each with the same prefix.
+`reader.refetch()` sends a native reload request.
+It returns no completion promise and does not synchronously replace the DOM.
+A reload creates a new document, so its old reader object, DOM references, and listeners must not be reused.
+
+### Media controller
+
+After `ready`, `reader.player` is `null` unless the document has player configuration.
+When present, it exposes `playHls(url, hlsConfig?)`, `playDash(url, { settings?, protectionData? })`, `playDirect(url)`, `playIframe(url)`, `addSubtitles(trackOrTracks)`, `log(message)`, `setDebug(enabled)`, and `toggleDebug()`.
+The play/subtitle methods return `Promise<void>`.
+Await initialization, but a resolved promise is not proof of successful playback: the player also reports failures through the host's reader error channel.
+`log` writes to the console and to the player overlay when debug is enabled.
+Player `dispose` belongs to the document lifecycle; engine instances are not public.
+See the [plugin WebView documentation](https://github.com/Yuneko-dev/Nekori-plugins/blob/HEAD/docs/docs.md#player-api) for media configuration and subtitle fields.
 
 ## CSS theme variables
 
-The page defines these variables on `:root`:
+Use CSS custom properties from `:root`:
 
-```css
---tsundoku-reader-background
---tsundoku-reader-text
+| Variables | Meaning |
+| --- | --- |
+| `--reader-background-color`, `--reader-text-color` | Current reader background and text colors. |
+| `--reader-font-size`, `--reader-font-family`, `--reader-line-height` | Reader typography. |
+| `--reader-margin-top`, `--reader-margin-right`, `--reader-margin-bottom`, `--reader-margin-left` | Reader content margins. |
+| `--reader-text-align`, `--reader-user-select` | Alignment and text-selection setting. |
+| `--reader-paragraph-indent`, `--reader-paragraph-spacing`, `--reader-min-fragment-lines` | Paragraph and fragmentation settings. |
+| `--md-sys-color-primary`, `--md-sys-color-secondary`, `--md-sys-color-tertiary`, `--md-sys-color-error` | Material theme accent colors. |
+| `--md-sys-color-on-primary`, `--md-sys-color-on-secondary`, `--md-sys-color-on-tertiary`, `--md-sys-color-on-error` | Foreground colors for the corresponding accents. |
+| `--md-sys-color-*-container`, `--md-sys-color-on-*-container` | Container variants for primary, secondary, tertiary, and error. |
+| `--md-sys-color-background`, `--md-sys-color-on-background`, `--md-sys-color-surface`, `--md-sys-color-on-surface` | Theme background/surface colors. |
+| `--md-sys-color-surface-variant`, `--md-sys-color-on-surface-variant`, `--md-sys-color-outline` | Other theme surface and outline colors. |
 
---md-sys-color-primary
---md-sys-color-on-primary
---md-sys-color-secondary
---md-sys-color-on-secondary
---md-sys-color-tertiary
---md-sys-color-on-tertiary
---md-sys-color-error
---md-sys-color-on-error
---md-sys-color-background
---md-sys-color-on-background
---md-sys-color-surface
---md-sys-color-on-surface
---md-sys-color-surface-variant
---md-sys-color-on-surface-variant
---md-sys-color-outline
+There is no JavaScript theme object.
+Read CSS values through the browser when needed:
+
+```js
+(() => {
+  const primary = getComputedStyle(document.documentElement)
+    .getPropertyValue('--md-sys-color-primary').trim()
+  console.info(primary)
+})()
 ```
-
-Primary, secondary, tertiary, and error colors also have `-container` and `on-…-container`
-variants. Generated reader settings include `--reader-background-color` and `--reader-text-color`.
 
 For example, give chapter blockquotes a theme-colored border:
 
 ```css
-#LNReader-chapter blockquote {
-  border-left: 3px solid var(--md-sys-color-primary);
-  padding-left: 1em;
+#nekori-reader nekori-chapter blockquote {
+  border-inline-start: 3px solid var(--md-sys-color-primary);
+  padding-inline-start: 1em;
 }
 ```
 
 ## HTML structure and selectors
 
-Chapter content lives inside `#LNReader-chapter`. In infinite-scroll and paged layouts, chapters
-with known IDs also have individual wrappers:
+The reader root is `#nekori-reader`, also marked `.nekori-reader` and `[data-nekori-reader-root]`.
+Chapter documents use wrappers across ordinary scrolling, infinite scrolling, and paged layouts:
 
 ```html
-<div id="LNReader-chapter">
-  <tsundoku-chapter
-    data-tsundoku-chapter="1"
-    data-chapter-id="123"
-    data-chapter-title="Chapter 1"
-    data-chapter-number="1"
-    data-chapter-path="/novel/ch-1"
-    data-chapter-url="https://example.org/novel/ch-1">
+<div id="nekori-reader" class="nekori-reader" data-nekori-reader-root>
+  <nekori-chapter
+    class="nekori-chapter"
+    data-nekori-chapter-id="123"
+    data-nekori-chapter-name="Chapter 1"
+    data-nekori-chapter-number="1"
+    data-nekori-chapter-path="/novel/ch-1"
+    data-nekori-chapter-url="https://example.org/novel/ch-1">
     <!-- Chapter content -->
-  </tsundoku-chapter>
+  </nekori-chapter>
 </div>
 ```
 
 | Selector | Meaning |
 | --- | --- |
-| `#LNReader-chapter` | Main chapter content container; works across layouts. |
-| `tsundoku-chapter` | Individual chapter wrapper in infinite-scroll or paged layout. Do not assume it exists in every mode. |
-| `.tsundoku-chapter-divider` | Infinite-scroll chapter boundary marker, carrying chapter metadata. |
-| `.tsundoku-plain-text` / `[data-tsundoku-plain-text="1"]` | Plain-text content. |
+| `#nekori-reader` / `.nekori-reader` | Document's reader root. |
+| `nekori-chapter` / `.nekori-chapter` | A chapter's content wrapper; use the string ID attribute to find a particular loaded chapter. |
+| `.nekori-chapter-divider` | Chapter boundary marker, carrying `data-nekori-*` metadata. |
+| `.nekori-plain-text` / `[data-nekori-plain-text="1"]` | Plain-text content built as text nodes. |
 
-Avoid replacing `body` or the whole chapter container with `innerHTML`: the reader depends on
-its existing structure. Do not reuse app-owned IDs such as `LNReader-chapter`, `reader-ui`,
-`tsundoku-custom-style`, or `next-chapter-btn-container`.
+Avoid replacing the reader root or `body` with `innerHTML`; the reader depends on its existing nodes.
+Use your own IDs/classes for added UI instead of app-owned IDs such as `nekori-reader`, `nekori-custom-style`, or `nekori-player-container`.
+Summary and feedback widgets have shadow roots; ordinary chapter CSS selectors do not style their internal elements.
 
 ## Find & Replace {#regex-rules}
 
@@ -342,7 +388,7 @@ If the preview looks correct but a chapter does not change, check the scope, ena
 
 ## Safe snippet practices
 
-Scope CSS to `#LNReader-chapter` or your own classes. Guard against missing elements and avoid
+Scope CSS to `#nekori-reader` or your own classes. Guard against missing elements and avoid
 adding duplicate nodes or listeners. Wrap JavaScript in a function so re-running a snippet does
 not redeclare top-level `const` or `let` variables.
 
@@ -350,7 +396,7 @@ This example marks blockquotes without duplicating anything on subsequent runs:
 
 ```js
 (() => {
-  const root = document.getElementById('LNReader-chapter')
+  const root = document.getElementById('nekori-reader')
   if (!root)
     return
   root.querySelectorAll('blockquote').forEach((quote) => {
